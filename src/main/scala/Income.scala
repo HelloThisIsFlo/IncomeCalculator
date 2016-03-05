@@ -1,4 +1,4 @@
-abstract class Income(taxPercentage: Double) {
+abstract class Income(val taxPercentage: Double) {
   def tax = taxPercentage / 100
 
   def net:Double
@@ -10,6 +10,8 @@ abstract class Income(taxPercentage: Double) {
     case income: Income => income.net == this.net && income.brut == this.brut
     case _ => false
   }
+
+  override def toString: String = s"Income : (brut -> $brut | net -> $net | taxes -> $taxPercentage)"
 }
 
 object Income {
@@ -17,13 +19,13 @@ object Income {
   def fromNet(income: Double, taxPercentage: Double):Income = NetIncome(income, taxPercentage)
 }
 
-private case class NetIncome(income: Double, taxPercentage: Double) extends Income(taxPercentage) {
+private case class NetIncome(income: Double, override val taxPercentage: Double) extends Income(taxPercentage) {
   def net = income
 
   def brut = income / (1 - tax)
 }
 
-private case class BrutIncome(income: Double, taxPercentage: Double) extends Income(taxPercentage)  {
+private case class BrutIncome(income: Double, override val taxPercentage: Double) extends Income(taxPercentage)  {
   def brut = income
 
   def net = income * (1 - tax)
